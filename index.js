@@ -2,6 +2,15 @@ var buttonColours = ["red", "blue", "green", "yellow"];
 
 var gamePattern = [];
 var userClickedPattern = []; 
+var level = 0
+var faliChecker = false;
+
+function patternChecker(step){
+    if (userClickedPattern[step] !== gamePattern[step]){
+        console.log("failure");
+        faliChecker = true;
+    }
+}
 
 
 function playSound(soundName){
@@ -24,18 +33,24 @@ function nextSequence(){
     gamePattern.push(randomChosenColour);
     $("button, "+  "." + randomChosenColour).fadeOut(180).fadeIn(180);
 
-    playSound(randomChosenColour)
+    playSound(randomChosenColour);
+    level++;
+    $("h1").text("level" + " " + level);
 }
 
-
-nextSequence()
-
+$(document).keydown(function() {
+    if  (level === 0){
+        $("h1").text("level" + " " + level);
+        nextSequence();
+        
+    }
+});
 
 
 
 $("div .btn").click(function (){
     var colorName = $(this).attr("id");
-    console.log(colorName);
+    
     
     playSound(colorName);
     animatePress(colorName);
@@ -43,4 +58,21 @@ $("div .btn").click(function (){
 
     userClickedPattern.push(colorName)
     
+    console.log("before checkig")
+    patternChecker(userClickedPattern.length-1)
+    if (faliChecker === false){
+        
+        if (userClickedPattern.length === gamePattern.length){
+            userClickedPattern = [];
+            setTimeout(function(){
+                nextSequence()
+            }, 1000)
+        }
+        
+    }else {
+        alert("game over")
+    }
+    
 });
+
+
