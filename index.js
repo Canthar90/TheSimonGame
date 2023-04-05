@@ -4,12 +4,32 @@ var gamePattern = [];
 var userClickedPattern = []; 
 var level = 0
 var faliChecker = false;
+var wrongSound = new Audio("sounds/wrong.mp3")
+var maxLvl = 0
 
 function patternChecker(step){
     if (userClickedPattern[step] !== gamePattern[step]){
-        console.log("failure");
         faliChecker = true;
     }
+}
+
+
+function gameOver(){
+    wrongSound.play();
+
+    $("body").addClass("game-over");
+    setTimeout(function(){
+        $("body").removeClass("game-over")
+    }, 200);
+    if (level > 0){
+        maxLvl = level;
+    }
+    
+    $("h1").text("Game Over you reached lvl " + maxLvl + ". Press any key to play again");
+    level = 0;
+    gamePattern = [];
+    userClickedPattern = [];
+    faliChecker = false;
 }
 
 
@@ -41,8 +61,7 @@ function nextSequence(){
 $(document).keydown(function() {
     if  (level === 0){
         $("h1").text("level" + " " + level);
-        nextSequence();
-        
+        nextSequence(); 
     }
 });
 
@@ -51,14 +70,15 @@ $(document).keydown(function() {
 $("div .btn").click(function (){
     var colorName = $(this).attr("id");
     
+    if (faliChecker === false){
+        playSound(colorName);
+        animatePress(colorName);
+    }
     
-    playSound(colorName);
-    animatePress(colorName);
     
 
     userClickedPattern.push(colorName)
     
-    console.log("before checkig")
     patternChecker(userClickedPattern.length-1)
     if (faliChecker === false){
         
@@ -70,7 +90,7 @@ $("div .btn").click(function (){
         }
         
     }else {
-        alert("game over")
+        gameOver();
     }
     
 });
